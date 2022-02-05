@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/projectTrackerApp/static/css/main.1c32f2e7.css",
+    "main.js": "/projectTrackerApp/static/js/main.a406917b.js",
+    "static/js/548.38f36123.chunk.js": "/projectTrackerApp/static/js/548.38f36123.chunk.js",
+    "static/js/320.1f8370d6.chunk.js": "/projectTrackerApp/static/js/320.1f8370d6.chunk.js",
+    "static/js/696.07a76160.chunk.js": "/projectTrackerApp/static/js/696.07a76160.chunk.js",
+    "static/js/232.3d4b508d.chunk.js": "/projectTrackerApp/static/js/232.3d4b508d.chunk.js",
+    "static/js/712.e132797f.chunk.js": "/projectTrackerApp/static/js/712.e132797f.chunk.js",
+    "static/js/787.209dab39.chunk.js": "/projectTrackerApp/static/js/787.209dab39.chunk.js",
+    "index.html": "/projectTrackerApp/index.html",
+    "main.1c32f2e7.css.map": "/projectTrackerApp/static/css/main.1c32f2e7.css.map",
+    "main.a406917b.js.map": "/projectTrackerApp/static/js/main.a406917b.js.map",
+    "548.38f36123.chunk.js.map": "/projectTrackerApp/static/js/548.38f36123.chunk.js.map",
+    "320.1f8370d6.chunk.js.map": "/projectTrackerApp/static/js/320.1f8370d6.chunk.js.map",
+    "696.07a76160.chunk.js.map": "/projectTrackerApp/static/js/696.07a76160.chunk.js.map",
+    "232.3d4b508d.chunk.js.map": "/projectTrackerApp/static/js/232.3d4b508d.chunk.js.map",
+    "712.e132797f.chunk.js.map": "/projectTrackerApp/static/js/712.e132797f.chunk.js.map",
+    "787.209dab39.chunk.js.map": "/projectTrackerApp/static/js/787.209dab39.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.1c32f2e7.css",
+    "static/js/main.a406917b.js"
+  ]
+}
