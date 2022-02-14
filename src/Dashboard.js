@@ -28,24 +28,23 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-
-
-
-
-
 const Dashboard = () => {
   const classes = useStyles();
   const history = useHistory();
   const spacingClasses = SpacingStyles();
   function Navigate(e) {
     if (e === "Project") history.push('project');
-    else if (e === "Profile") history.push('profile');
+    else if (e === "Profile")  history.push({
+      pathname: '/profile',
+      state: {location: 'Dashboard' }
+  });
     else if (e === "Settings") history.push('settings');
     else if (e === "Users") history.push('users');
     else if (e === "EmployeeList") history.push('employees');
     else if (e === "Overview") history.push('overview');
     else if (e === "Competencies") history.push('competencies');
     else if (e === "GeneralSettings") history.push('generalsettings');
+    else if (e === "Chart") history.push('charts');
   }
 
   return (
@@ -73,12 +72,12 @@ const Dashboard = () => {
           </IconButton>
           <Typography id="Overview" className={classes.text} style={{marginLeft:20}}>Overview</Typography>
         </div>
-        <div class="column">
-          <IconButton className={classes.icons} onClick={() => { Navigate("Overview") }}>
+        {/* <div class="column">
+          <IconButton className={classes.icons} onClick={() => { Navigate("Chart") }}>
             <BarChartIcon />
           </IconButton>
-          <Typography id="Overview" className={classes.text} style={{marginLeft:30}}>Chart</Typography>
-        </div>
+          <Typography id="Chart" className={classes.text} style={{marginLeft:30}}>Chart</Typography>
+        </div> */}
       </div>
     </div>
   );

@@ -25,6 +25,8 @@ import IndividualView from "./IndividualView"
 import Competencies from "./Competencies";
 import GeneralSettings from "./GeneralSettings";
 import GeneralSettingsEdit from "./GeneralSettingsEdit";
+import AddEmployee from "./AddEmployee";
+import Charts from "./Chart"
 function App() {
 return (
 	<>
@@ -38,6 +40,7 @@ return (
 		<Route path="/project" component={Project} />
 		<Route path="/settings" component={Settings} />
 		<Route path="/users" component={Users} />
+		<Route path="/chart" component={Charts} />
 		<Route path="/competencies" component={Competencies} />
 		<Route path="/employees" component={EmployeeList} />
 		<Route path="/overview" component={Overview} />
@@ -45,6 +48,7 @@ return (
 		<Route path="/generalsettings" component={GeneralSettings} />
 		<Route path="/generalsettingsedit" component={GeneralSettingsEdit} />
 		<Route path="/demo" component={Demo} />
+		<Route path="/addNewEmployee" component={AddEmployee} />
 		<Route path="/dialogfield" component={DialogFormFilled} />
 		<Route path="/dialognormal" component={DialogFormNormal} />
 		<Route path="/dialogoutlined" component={DialogFormOutlined} />

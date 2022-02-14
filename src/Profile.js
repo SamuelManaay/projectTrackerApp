@@ -1,12 +1,5 @@
 import React, { useState, Suspense, lazy, useEffect } from 'react';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
-import Hidden from '@material-ui/core/Hidden';
+import { useHistory, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import ListItem from '@material-ui/core/ListItem';
@@ -18,8 +11,11 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
+import axios from "axios";
 import { SpacingStyles, TypographyStyles, TextFieldStyles } from './jss';
-import { formatDate ,formatDateYearFirst } from './utils/functions';
+import { formatDate, formatDateYearFirst } from './utils/functions';
+import Breadcrumbs from '@material-ui/core/Breadcrumbs';
+import Link from '@material-ui/core/Link';
 const useStyles = makeStyles((theme) => ({
   divider: {
     background: theme.palette.divider,
@@ -35,847 +31,311 @@ export default function Profile() {
   const typographyClasses = TypographyStyles();
   const spacingClasses = SpacingStyles();
   const [file, setFile] = useState(null);
+  const history = useHistory();
+  const location = useLocation();
+  const EMPID = location.state.id;
+  const Loc = location.state.location;
+
+
+  const [userData, setUserData] = useState({});
+  useEffect(() => {
+    axios
+      .post('http://127.0.0.1:5000/searchEmpID',
+        {
+          database: 'projectTrackerDB', table: 'employee_table1', empID: EMPID
+        })
+      .then((response) => {
+        setUserData(response.data);
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
 
   return (
+
     <div>
-    <Formik
-      enableReinitialize
-      initialValues={{
-        // Basic Information
-        EmployeeCode:  '',
-        HospitalNo: '',
-        LastName:  'Mana-ay',
-        FirstName: 'Samuel',
-        MiddleName:  'Abelondon',
-        Suffix: '',
-        Gender:'Male',
-        CivilStatus:  'Single',
-        Birthdate: '1994/07/23',
-        Birthplace: 'Burgos St. Pontevedra Negros Occidental',
-        Nationality: 'Filipino',
-        Religion: 'Baptist',
-        Occupation: 'IT',
-        BloodType:  'O',
-        //Work Info
-        Position: 'Software Engineer',
-        Regularization: '2021/12/01',
-        Hired: '2021/06/01',
+      <Breadcrumbs>
+        {Loc === 'EmployeeList' ? (
+          <Link color="inherit" onClick={() => history.push('/employees')}>
+            {'Employee List'}
+          </Link>
+        ) : (
+          <Link color="inherit" onClick={() => history.push('/dashboard')}>
+            {'Dashboard'}
+          </Link>
+        )}
+        <Typography variant="h5" className={classes.fontBold}>
+          {'Profile'}
+        </Typography>
+      </Breadcrumbs>
 
-        // Contact Information
-        MobileNo:  '09561369824',
-        TelephoneNo:  '222-222-222',
-        EmailAddress1: 'manaaysamuel@gmail.com',
-        EmailAddress2:  'manaaysam@gmail.com',
+      <Formik
+        enableReinitialize
 
-        // Current Address
-        HouseNo: '',
-        CurrentStreetAddress: '',
-        CurrentBarangay:  '',
-        CurrentCityMunicipality:  '',
-        CurrentProvince: '',
-        Region: '',
+        initialValues={{
+          // Basic Information
+          _id: userData[0]?._id ? userData[0]?._id : '',
+          EmployeeCode: userData[0]?.EmployeeCode ? userData[0]?.EmployeeCode : '',
+          LastName: userData[0]?.LastName ? userData[0]?.LastName : '',
+          FirstName: userData[0]?.FirstName ? userData[0]?.FirstName : '',
+          MiddleName: userData[0]?.MiddleName ? userData[0]?.MiddleName : '',
+          Suffix: userData[0]?.Suffix ? userData[0]?.Suffix : '',
+          Gender: userData[0]?.Gender ? userData[0]?.Gender : '',
+          CivilStatus: userData[0]?.CivilStatus ? userData[0]?.CivilStatus : '',
+          Birthdate: userData[0]?.Birthdate ? userData[0]?.Birthdate : '',
+          Birthplace: userData[0]?.Birthplace ? userData[0]?.Birthplace : '',
+          ExtensionName: userData[0]?.ExtensionName ? userData[0]?.ExtensionName : '',
+          Religion: userData[0]?.Religion ? userData[0]?.Religion : '',
+          BloodType: userData[0]?.BloodType ? userData[0]?.BloodType : '',
+          // Contact Information
+          MobileNo: userData[0]?.MobileNo ? userData[0]?.MobileNo : '',
+          TelephoneNo: userData[0]?.TelephoneNo ? userData[0]?.TelephoneNo : '',
+          EmailAddress1: userData[0]?.PersonalEmail ? userData[0]?.PersonalEmail : '',
+          EmailAddress2: userData[0]?.CompanyEmail ? userData[0]?.CompanyEmail : '',
+          EmergencyName: userData[0]?.EmergencyName ? userData[0]?.EmergencyName : '',
+          EmergencyRelationship: userData[0]?.EmergencyRelationship ? userData[0]?.EmergencyRelationship: '',
+          EmergencyMobileNo: userData[0]?.EmergencyMobileNo ? userData[0]?.EmergencyMobileNo : '',
+          Address: userData[0]?.Address ? userData[0]?.Address : '',
+          EmergencyAddress: userData[0]?.EmergencyAddress ? userData[0]?.EmergencyAddress : '',
+          SSSNo: userData[0]?.SSSNo ? userData[0]?.SSSNo  : '',
+          TINNo: userData[0]?.TINNo ? userData[0]?.TINNo : '',
+          PagibigNo: userData[0]?.PagibigNo ? userData[0]?.PagibigNo : '',
+          NoOfDependent: userData[0]?.NoOfDependent ? userData[0]?.NoOfDependent : '',
 
-        // Permanent Address
-        PermanentHouseNo:  '',
-        PermanentStreetAddress:  '',
-        PermanentBarangay: '',
-        PermanentCityMunicipality:  '',
-        PermanentProvince:  '',
-        PermanentRegion: '',
-
-        // Other Details
-        PhilhealthNumber: '',
-        PassportNo: '',
-        SSSNo:  '',
-        PagIbigNo: '',
-        TinNo:  '',
-
-        //In Case Of Emergency
-        ContactPersonName1: '',
-        ContactPersonRelation1:  '',
-        ContactPersonMobileNum1:  '',
-        ContactPersonName2:  '',
-        ContactPersonRelation2:  '',
-        ContactPersonMobileNum2:  '',
-      }}
-      onSubmit={(values) => { }}
+        }}
+        onSubmit={(values) => { }}
       // validationSchema={personalInformationSchema}
-    >
-      {({ values, touched, handleBlur, handleChange, handleSubmit, setFieldValue }) => (
-        <Card>
-          {/* <Suspense fallback={<h3>Loading...</h3>}>
-            <AddressDialog
-              open={openAddDialog}
-              details={addressType}
-              onAgree={(location) => {
-                setAddressDialogOpen(false);
-                if (location.type === 'current') {
-                  setFieldValue('CurrentBarangay', location?.Barangay);
-                  setFieldValue('CurrentCityMunicipality', location?.TownCity);
-                  setFieldValue('CurrentProvince', location?.Province);
-                  setFieldValue('Region', location?.Region);
-                } else {
-                  setFieldValue('PermanentBarangay', location?.Barangay);
-                  setFieldValue('PermanentCityMunicipality', location?.TownCity);
-                  setFieldValue('PermanentProvince', location?.Province);
-                  setFieldValue('PermanentRegion', location?.Region);
-                }
-              }}
-              onDisagree={() => setAddressDialogOpen(false)}
-            />
-            <ReusableDialog
-              disableBackdropClick
-              disableEscapeKeyDown
-              details={selectedDetails}
-              open={openConfDialog}
-              onDisagree={() => setConfirmDialogOpen(false)}
-              isLoading={false}
-            />
-            <SuccessDialog
-              disableBackdropClick
-              disableEscapeKeyDown
-              details={selectedDetails}
-              open={openSucDialog}
-              onAgree={() => {
-                dispatch(getPersonalDetails(DataCenterID));
-                setSuccessDialogOpen(false);
-              }}
-              onDisagree={() => setSuccessDialogOpen(false)}
-              isLoading={false}
-            />
-          </Suspense> */}
-          <CardContent className={textFieldClasses.textFieldSection}>
-          <Grid container spacing={1} direction="column" alignItems="center" justify="center" style={{ minHeight: '10vh', marginBottom: 20 }}>
-              <Grid item lg={3} md={6} xs={12}>
-                <img src={''} alt={''} style={{ height: 150, width: 200, alignItems: 'center' }} />
-              </Grid>
-            </Grid>
-            <Divider classes={{ root: classes.divider }} />
-          <Typography
-          variant="h5"
-          className={clsx(
-            typographyClasses.fontBold,
-            spacingClasses.marginBottom2,
-            spacingClasses.marginTop1
-          )}
-        >
-              Work Information
-            </Typography>
-          
-            <Grid container className={spacingClasses.marginBottom2}>
-            <Grid item lg={6} md={6} xs={12}>
-              <List>
-              <ListItem>
-                <ListItemText primary="Position Title"  secondary={values.Position}/>
-              </ListItem>
-            </List>
-              </Grid>
-              <Grid item lg={6} md={6} xs={12}>
-              <List>
-              <ListItem>
-                <ListItemText primary="Date Hire"  secondary={formatDate(values.Hired)}/>
-              </ListItem>
-            </List>
-              </Grid>
-              <Grid item lg={6} md={6} xs={12}>
-              <List>
-              <ListItem>
-                <ListItemText primary="Regularization Date" secondary={formatDate(values.Regularization)}/>
-              </ListItem>
-            </List>
-              </Grid>
-            
-            </Grid>
+      >
+        {({ values, touched, handleBlur, handleChange, handleSubmit, setFieldValue }) => (
+          <Card>
 
-  
+            <CardContent className={textFieldClasses.textFieldSection}>
 
-          <Divider classes={{ root: classes.divider }} />
-          <Typography
-          variant="h5"
-          className={clsx(
-            typographyClasses.fontBold,
-            spacingClasses.marginBottom2,
-            spacingClasses.marginTop1
-          )}
-        >
-              Basic Information
-            </Typography>
-          
-            <Grid container className={spacingClasses.marginBottom2}>
-            <Grid item lg={6} md={6} xs={12}>
-              <List>
-              <ListItem>
-                <ListItemText primary="Employee Code" secondary={values.EmployeeCode} />
-              </ListItem>
-            </List>
-              </Grid>
-              <Grid item lg={6} md={6} xs={12}>
-              <List>
-              <ListItem>
-                <ListItemText primary="Last Name" secondary={values.LastName} />
-              </ListItem>
-            </List>
-              </Grid>
-              <Grid item lg={6} md={6} xs={12}>
-              <List>
-              <ListItem>
-                <ListItemText primary="First Name" secondary={values.FirstName} />
-              </ListItem>
-            </List>
-              </Grid>
-              <Grid item lg={6} md={6} xs={12}>
-              <List>
-              <ListItem>
-                <ListItemText primary="Middle Name" secondary={values.MiddleName} />
-              </ListItem>
-            </List>
-              </Grid>
-              <Grid item lg={6} md={6} xs={12}>
-              <List>
-              <ListItem>
-                <ListItemText primary="Suffix" secondary={values.Suffix} />
-              </ListItem>
-            </List>
-              </Grid>
-              <Grid item lg={6} md={6} xs={12}>
-              <List>
-              <ListItem>
-                <ListItemText primary="Extension Name" secondary={values.ExtensionName} />
-              </ListItem>
-            </List>
-              </Grid>
-              <Grid item lg={6} md={6} xs={12}>
-              <List>
-              <ListItem>
-                <ListItemText primary="Birthdate" secondary={formatDate(values.Birthdate)} />
-              </ListItem>
-            </List>
-              </Grid>
-              <Grid item lg={6} md={6} xs={12}>
-              <List>
-              <ListItem>
-                <ListItemText primary="Gender" secondary={values.Gender} />
-              </ListItem>
-            </List>
-              </Grid>
-              <Grid item lg={6} md={6} xs={12}>
-              <List>
-              <ListItem>
-                <ListItemText primary="Civil Status" secondary={values.CivilStatus} />
-              </ListItem>
-            </List>
-              </Grid>
-              <Grid item lg={6} md={6} xs={12}>
-             <List>
-              <ListItem>
-                <ListItemText primary="Religion" secondary={values.Religion} />
-              </ListItem>
-            </List>
-              </Grid>
-              <Grid item lg={6} md={6} xs={12}>
-             <List>
-              <ListItem>
-                <ListItemText primary="Nationality" secondary={values.Nationality} />
-              </ListItem>
-            </List>
-              </Grid>
-              <Grid item lg={6} md={6} xs={12}>
-              <List>
-              <ListItem>
-                <ListItemText primary="Blood Type" secondary={values.BloodType} />
-              </ListItem>
-            </List>
-              </Grid>
-            </Grid>
+              <Divider classes={{ root: classes.divider }} />
 
+              <Typography
+                variant="h5"
+                className={clsx(
+                  typographyClasses.fontBold,
+                  spacingClasses.marginBottom2,
+                  spacingClasses.marginTop1
+                )}
+              >
+                Basic Information
+              </Typography>
 
-
-
-            <Divider classes={{ root: classes.divider }} />
-
-            <Typography
-          variant="h5"
-          className={clsx(
-            typographyClasses.fontBold,
-            spacingClasses.marginBottom2,
-          )}
-        >
-              Contact Information
-            </Typography>
-            <Grid container className={spacingClasses.marginBottom2}>
-              <Grid item lg={6} md={6} xs={12}>
-              <List>
-              <ListItem>
-                <ListItemText primary="Telephone No." secondary={values.TelephoneNo} />
-              </ListItem>
-            </List>
-              </Grid>
-              <Grid item lg={6} md={6} xs={12}>
-              <List>
-              <ListItem>
-                <ListItemText primary="Mobile No." secondary={values.MobileNo} />
-              </ListItem>
-            </List>
-              </Grid>
-              <Grid item lg={6} md={6} xs={12}>
-              <List>
-              <ListItem>
-                <ListItemText primary="Personal Email" secondary={values.EmailAddress1} />
-              </ListItem>
-            </List>
-              </Grid>
-              <Grid item lg={6} md={6} xs={12}>
-              <List>
-              <ListItem>
-                <ListItemText primary="Company Email" secondary={values.EmailAddress2} />
-              </ListItem>
-            </List>
-              </Grid>
-            </Grid>
-
-            <Divider classes={{ root: classes.divider }} />
-
-            <Typography
-          variant="h5"
-          className={clsx(
-            typographyClasses.fontBold,
-            spacingClasses.marginBottom2,
-          )}
-        >
-
-              Current Address
-            </Typography>
-            <Hidden lgUp>
-            <Grid container className={spacingClasses.marginBottom2}>
-                <Grid container spacing={2}>
-                  <Grid
-                    item
-                    lg={12}
-                    md={12}
-                    sm={12}
-                    xs={12}
-                    style={{ marginTop: 10, marginLeft: 10, marginRight: 10 }}
-                  >
-             <List>
-              <ListItem>
-                <ListItemText primary="Current House No." secondary={values.HouseNo} />
-              </ListItem>
-            </List>
-                  </Grid>
-                </Grid>
-                <Grid container spacing={2}>
-                  <Grid
-                    item
-                    lg={12}
-                    md={12}
-                    sm={12}
-                    xs={12}
-                    style={{ marginTop: 10, marginLeft: 10, marginRight: 10 }}
-                  >
+              <Grid container className={spacingClasses.marginBottom2}>
+                <Grid item lg={6} md={6} xs={12}>
                   <List>
                     <ListItem>
-                      <ListItemText primary="Current Street" secondary={values.CurrentStreetAddress} />
-                    </ListItem>
-                  </List>
-                  </Grid>
-                </Grid>
-
-                <Grid container spacing={2}>
-                  <Grid
-                    item
-                    lg={12}
-                    md={12}
-                    sm={12}
-                    xs={12}
-                    style={{ marginTop: 10, marginLeft: 10, marginRight: 10 }}
-                  >
-
-                      <List>
-                    <ListItem>
-                      <ListItemText primary="Current Barangay" secondary={values.CurrentBarangay} />
-                    </ListItem>
-                  </List>
-                  </Grid>
-                </Grid>
-
-                <Grid container spacing={2}>
-                  <Grid
-                    item
-                    lg={12}
-                    md={12}
-                    sm={12}
-                    xs={12}
-                    style={{ marginTop: 10, marginLeft: 10, marginRight: 10 }}
-                  >
-                    <List>
-                    <ListItem>
-                      <ListItemText primary="Current City" secondary={values.CurrentCityMunicipality} />
-                    </ListItem>
-                  </List>
-                  </Grid>
-                </Grid>
-
-                <Grid container spacing={2}>
-                  <Grid
-                    item
-                    lg={12}
-                    md={12}
-                    sm={12}
-                    xs={12}
-                    style={{ marginTop: 10, marginLeft: 10, marginRight: 10 }}
-                  >
-                          <List>
-                    <ListItem>
-                      <ListItemText primary="Current Province" secondary={values.CurrentProvince} />
-                    </ListItem>
-                  </List>
-                  </Grid>
-                </Grid>
-
-                <Grid container spacing={2}>
-                  <Grid
-                    item
-                    lg={12}
-                    md={12}
-                    sm={12}
-                    xs={12}
-                    style={{ marginTop: 10, marginLeft: 10, marginRight: 10 }}
-                  >
-                          <List>
-                    <ListItem>
-                      <ListItemText primary="Current Region" secondary={values.Region} />
-                    </ListItem>
-                  </List>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid container spacing={2}>
-                <Grid item lg={12} md={12} sm={12} xs={12} style={{ marginTop: 10 }}>
-   
-                </Grid>
-              </Grid>
-              <Grid container spacing={2}>
-                <Grid item lg={12} md={12} sm={12} xs={12} style={{ marginTop: 10, marginLeft: 2, marginRight: 3 }}>
-                <List>
-                    <ListItem>
-                      <ListItemText primary="Permanent House No." secondary={values.PermanentHouseNo} />
-                    </ListItem>
-                  </List>
-
-                </Grid>
-              </Grid>
-              <Grid container spacing={2}>
-                <Grid item lg={12} md={12} sm={12} xs={12} style={{ marginTop: 5, marginLeft: 2, marginRight: 3 }}>
-
-                <List>
-                    <ListItem>
-                      <ListItemText primary="Permanent Street" secondary={values.PermanentStreetAddress} />
-                    </ListItem>
-                  </List>
-
-                </Grid>
-              </Grid>
-              <Grid container spacing={2}>
-                <Grid item lg={12} md={12} sm={12} xs={12} style={{ marginTop: 5, marginLeft: 2, marginRight: 3 }}>
-                <List>
-                    <ListItem>
-                      <ListItemText primary="Permanent Barangay" secondary={values.PermanentBarangay} />
-                    </ListItem>
-                  </List>
-     
-                </Grid>
-              </Grid>
-              <Grid container spacing={2}>
-                <Grid item lg={12} md={12} sm={12} xs={12} style={{ marginTop: 5, marginLeft: 2, marginRight: 3 }}>
-                <List>
-                    <ListItem>
-                      <ListItemText primary="Permanent City" secondary={values.PermanentCityMunicipality} />
-                    </ListItem>
-                  </List>
-     
-                </Grid>
-              </Grid>
-              <Grid container spacing={2}>
-                <Grid item lg={12} md={12} sm={12} xs={12} style={{ marginTop: 5, marginLeft: 2, marginRight: 3 }}>
-                <List>
-                    <ListItem>
-                      <ListItemText primary="Permanent Province" secondary={values.PermanentProvince} />
-                    </ListItem>
-                  </List>
-                </Grid>
-              </Grid>
-              <Grid container spacing={2}>
-                <Grid item lg={12} md={12} sm={12} xs={12} style={{ marginTop: 5, marginLeft: 2, marginRight: 3 }}>
-                <List>
-                    <ListItem>
-                      <ListItemText primary="Permanent Region" secondary={values.PermanentRegion} />
-                    </ListItem>
-                  </List>
-
-                </Grid>
-              </Grid>
-            </Hidden>
-
-            <Hidden mdDown>
-              <Grid container spacing={2} className={spacingClasses.marginTop1}>
-                <Grid item lg={6} md={6} xs={12}>
-                <List>
-                    <ListItem>
-                      <ListItemText primary="Current House No." secondary={values.HouseNo} />
+                      <ListItemText primary="Employee Code" secondary={values.EmployeeCode} />
                     </ListItem>
                   </List>
                 </Grid>
                 <Grid item lg={6} md={6} xs={12}>
-                <List>
+                  <List>
                     <ListItem>
-                      <ListItemText primary="Permanent House No." secondary={values.PermanentHouseNo} />
+                      <ListItemText primary="Last Name" secondary={values.LastName} />
                     </ListItem>
                   </List>
                 </Grid>
                 <Grid item lg={6} md={6} xs={12}>
-                <List>
+                  <List>
                     <ListItem>
-                      <ListItemText primary="Current Street" secondary={values.CurrentStreetAddress} />
+                      <ListItemText primary="First Name" secondary={values.FirstName} />
                     </ListItem>
                   </List>
                 </Grid>
                 <Grid item lg={6} md={6} xs={12}>
-                <List>
+                  <List>
                     <ListItem>
-                      <ListItemText primary="Permanent Street" secondary={values.PermanentStreetAddress} />
+                      <ListItemText primary="Middle Name" secondary={values.MiddleName} />
                     </ListItem>
                   </List>
                 </Grid>
                 <Grid item lg={6} md={6} xs={12}>
-                <List>
+                  <List>
                     <ListItem>
-                      <ListItemText primary="Current Barangay" secondary={values.CurrentBarangay} />
+                      <ListItemText primary="Suffix" secondary={values.Suffix} />
                     </ListItem>
                   </List>
                 </Grid>
                 <Grid item lg={6} md={6} xs={12}>
-                <List>
+                  <List>
                     <ListItem>
-                      <ListItemText primary="Permanent Barangay" secondary={values.PermanentBarangay} />
+                      <ListItemText primary="Extension Name" secondary={values.ExtensionName} />
                     </ListItem>
                   </List>
                 </Grid>
                 <Grid item lg={6} md={6} xs={12}>
-                <List>
+                  <List>
                     <ListItem>
-                      <ListItemText primary="Current City" secondary={values.CurrentCityMunicipality} />
+                      <ListItemText primary="Birthdate" secondary={values.Birthdate} />
                     </ListItem>
                   </List>
                 </Grid>
                 <Grid item lg={6} md={6} xs={12}>
-                <List>
+                  <List>
                     <ListItem>
-                      <ListItemText primary="Permanent City" secondary={values.PermanentCityMunicipality} />
+                      <ListItemText primary="Gender" secondary={values.Gender} />
                     </ListItem>
                   </List>
                 </Grid>
                 <Grid item lg={6} md={6} xs={12}>
-                <List>
+                  <List>
                     <ListItem>
-                      <ListItemText primary="Current Province" secondary={values.CurrentProvince} />
+                      <ListItemText primary="Civil Status" secondary={values.CivilStatus} />
                     </ListItem>
                   </List>
-
                 </Grid>
+          
                 <Grid item lg={6} md={6} xs={12}>
-                <List>
+                  <List>
                     <ListItem>
-                      <ListItemText primary="Permanent Province" secondary={values.PermanentProvince} />
-                    </ListItem>
-                  </List>
-   
-                </Grid>
-                <Grid item lg={6} md={6} xs={12}>
-                <List>
-                    <ListItem>
-                      <ListItemText primary="Current Region" secondary={values.Region} />
-                    </ListItem>
-                  </List>
-                </Grid>
-                <Grid item lg={6} md={6} xs={12}>
-                <List>
-                    <ListItem>
-                      <ListItemText primary="Permanent Region" secondary={values.PermanentRegion} />
-                    </ListItem>
-                  </List>
-                </Grid>
-              </Grid>
-            </Hidden>
-
-            <Divider classes={{ root: classes.divider }} />
-             <Typography
-          variant="h5"
-          className={clsx(
-            typographyClasses.fontBold,
-            spacingClasses.marginBottom2,
-            spacingClasses.marginTop1
-          )}
-        >
-              
-              In Case of Emergency
-            </Typography>
-            <Hidden mdDown>
-            <Grid container className={spacingClasses.marginBottom2}>
-                <Grid item lg={6} md={6} xs={12}>
-                <List>
-                    <ListItem>
-                      <ListItemText primary="Name" secondary={values.ContactPersonName1} />
-                    </ListItem>
-                  </List>
-                </Grid>
-                <Grid item lg={6} md={6} xs={12}>
-                <List>
-                    <ListItem>
-                      <ListItemText primary="Name" secondary={values.ContactPersonName2} />
-                    </ListItem>
-                  </List>
-                </Grid>
-                <Grid item lg={6} md={6} xs={12}>
-                <List>
-                    <ListItem>
-                      <ListItemText primary="Relation" secondary={values.ContactPersonRelation1} />
-                    </ListItem>
-                  </List>
-                </Grid>
-                <Grid item lg={6} md={6} xs={12}>
-                <List>
-                    <ListItem>
-                      <ListItemText primary="Relation" secondary={values.ContactPersonRelation2} />
-                    </ListItem>
-                  </List>
-                </Grid>
-                <Grid item lg={6} md={6} xs={12}>
-                <List>
-                    <ListItem>
-                      <ListItemText primary="Mobile No." secondary={values.ContactPersonMobileNum1} />
-                    </ListItem>
-                  </List>
-                </Grid>
-                <Grid item lg={6} md={6} xs={12}>
-                <List>
-                    <ListItem>
-                      <ListItemText primary="Mobile No." secondary={values.ContactPersonMobileNum2} />
-                    </ListItem>
-                  </List>
-                </Grid>
-              </Grid>
-            </Hidden>
-            <Hidden lgUp>
-              <Grid container spacing={2}>
-                <Grid item lg={12} md={12} sm={12} xs={12} style={{ marginTop: 10, marginLeft: 5, marginRight: 10 }}>
-                <List>
-                    <ListItem>
-                      <ListItemText primary="Name" secondary={values.ContactPersonName1} />
-                    </ListItem>
-                  </List>
-                </Grid>
-              </Grid>
-              <Grid container spacing={2}>
-                <Grid item lg={12} md={12} sm={12} xs={12} style={{ marginTop: 10, marginLeft: 5, marginRight: 10 }}>
-                <List>
-                    <ListItem>
-                      <ListItemText primary="Relation" secondary={values.ContactPersonRelation1} />
-                    </ListItem>
-                  </List>
-    
-                </Grid>
-              </Grid>
-
-              <Grid container spacing={2}>
-                <Grid item lg={12} md={12} sm={12} xs={12} style={{ marginTop: 10, marginLeft: 5, marginRight: 10 }}>
-                <List>
-                    <ListItem>
-                      <ListItemText primary="Telephone No." secondary={values.ContactPersonMobileNum1} />
+                      <ListItemText primary="Blood Type" secondary={values.BloodType} />
                     </ListItem>
                   </List>
                 </Grid>
               </Grid>
 
-              <Grid container spacing={2}>
-                <Grid item lg={12} md={12} sm={12} xs={12} style={{ marginTop: 10, marginLeft: 5, marginRight: 10 }}>
-                <List>
+
+
+
+              <Divider classes={{ root: classes.divider }} />
+
+              <Typography
+                variant="h5"
+                className={clsx(
+                  typographyClasses.fontBold,
+                  spacingClasses.marginBottom2,
+                )}
+              >
+                Contact Information
+              </Typography>
+              <Grid container className={spacingClasses.marginBottom2}>
+                <Grid item lg={6} md={6} xs={12}>
+                  <List>
                     <ListItem>
-                      <ListItemText primary="Name" secondary={values.ContactPersonName2} />
+                      <ListItemText primary="Telephone No." secondary={values.TelephoneNo} />
                     </ListItem>
                   </List>
-   
+                </Grid>
+                <Grid item lg={6} md={6} xs={12}>
+                  <List>
+                    <ListItem>
+                      <ListItemText primary="Mobile No." secondary={values.MobileNo} />
+                    </ListItem>
+                  </List>
+                </Grid>
+                <Grid item lg={6} md={6} xs={12}>
+                  <List>
+                    <ListItem>
+                      <ListItemText primary="Personal Email" secondary={values.EmailAddress1} />
+                    </ListItem>
+                  </List>
+                </Grid>
+                <Grid item lg={6} md={6} xs={12}>
+                  <List>
+                    <ListItem>
+                      <ListItemText primary="Company Email" secondary={values.EmailAddress2} />
+                    </ListItem>
+                  </List>
                 </Grid>
               </Grid>
 
-              <Grid container spacing={2}>
-                <Grid item lg={12} md={12} sm={12} xs={12} style={{ marginTop: 10, marginLeft: 5, marginRight: 10 }}>
-                <List>
+
+              <Divider classes={{ root: classes.divider }} />
+
+              <Typography
+                variant="h5"
+                className={clsx(
+                  typographyClasses.fontBold,
+                  spacingClasses.marginBottom2,
+                )}
+              >
+                Emergency Contacts
+              </Typography>
+              <Grid container className={spacingClasses.marginBottom2}>
+                <Grid item lg={6} md={6} xs={12}>
+                  <List>
                     <ListItem>
-                      <ListItemText primary="Relation" secondary={values.ContactPersonRelation2} />
+                      <ListItemText primary="Name" secondary={values.EmergencyName} />
                     </ListItem>
                   </List>
-      
                 </Grid>
-              </Grid>
-
-              <Grid container spacing={2}>
-                <Grid item lg={12} md={12} sm={12} xs={12} style={{ marginTop: 10, marginLeft: 5, marginRight: 10 }}>4
-                <List>
+                <Grid item lg={6} md={6} xs={12}>
+                  <List>
                     <ListItem>
-                      <ListItemText primary="Telephone No." secondary={values.ContactPersonMobileNum2} />
+                      <ListItemText primary="Relationship" secondary={values.EmergencyRelationship} />
                     </ListItem>
                   </List>
-
+                </Grid>
+                <Grid item lg={6} md={6} xs={12}>
+                  <List>
+                    <ListItem>
+                      <ListItemText primary="Mobile No." secondary={values.EmergencyMobileNo} />
+                    </ListItem>
+                  </List>
+                </Grid>
+                <Grid item lg={6} md={6} xs={12}>
+                  <List>
+                    <ListItem>
+                      <ListItemText primary="Address" secondary={values.EmergencyAddress} />
+                    </ListItem>
+                  </List>
                 </Grid>
               </Grid>
-            </Hidden>
+              <Divider classes={{ root: classes.divider }} />
 
-            <Divider classes={{ root: classes.divider }} />
-            <Typography
-              variant="h5"
-              className={clsx(typographyClasses.fontBold, spacingClasses.marginBottom2, spacingClasses.marginTop5)}
-            >
-              Other Information
-            </Typography>
-            <Grid container spacing={1}>
-              <Grid item lg={6} md={6} xs={12}>
-              <List>
+              <Typography
+                variant="h5"
+                className={clsx(
+                  typographyClasses.fontBold,
+                  spacingClasses.marginBottom2,
+                )}
+              >
+                Other Information
+              </Typography>
+              <Grid container className={spacingClasses.marginBottom2}>
+                <Grid item lg={6} md={6} xs={12}>
+                  <List>
                     <ListItem>
                       <ListItemText primary="SSS No." secondary={values.SSSNo} />
                     </ListItem>
                   </List>
-     
-              </Grid>
-              <Grid item lg={6} md={6} xs={12}>
-              <List>
+                </Grid>
+                <Grid item lg={6} md={6} xs={12}>
+                  <List>
                     <ListItem>
-                      <ListItemText primary="Pag-ibig No." secondary={values.PagIbigNo} />
+                      <ListItemText primary="Pag-IBIG No." secondary={values.PagibigNo} />
                     </ListItem>
                   </List>
-
-              </Grid>
-
-              <Grid item lg={6} md={6} xs={12}>
-              <List>
+                </Grid>
+                <Grid item lg={6} md={6} xs={12}>
+                  <List>
                     <ListItem>
-                      <ListItemText primary="Philhealth No." secondary={values.PhilhealthNumber} />
+                      <ListItemText primary="Tin No." secondary={values.TINNo} />
                     </ListItem>
                   </List>
-         
-              </Grid>
-
-              <Grid item lg={6} md={6} xs={12}>
-              <List>
+                </Grid>
+                <Grid item lg={6} md={6} xs={12}>
+                  <List>
                     <ListItem>
-                      <ListItemText primary="Tin No." secondary={values.TinNo} />
+                      <ListItemText primary="No. of Dependents" secondary={values.NoOfDependent} />
                     </ListItem>
                   </List>
+                </Grid>
+              </Grid>     
 
-              </Grid>
-            </Grid>
-          </CardContent>
-        </Card>
-      )}
-    </Formik>
-  </div>
-    // <Box
-    //   component="form"
-    //   alignContent="center"
-    //   position="absolute"
-    //   top="10%"
-    //   left="25%"
-    //   margin-top="-50px"
-    //   width="100"
-    //   margin-left="-50px"
-    //   sx={{
-    //     '& .MuiTextField-root': { m: 1 },
-    //   }}
-    //   noValidate
-    //   autoComplete="off"
-    // >
-    //   <div>
-    //     <TextField
-    //       required
-    //       id="FN"
-    //       label="First Name"
-    //       defaultValue="John"
-    //       fullWidth
-    //     />
-    //     <TextField
-    //       required
-    //       id="LN"
-    //       label="Last Name"
-    //       defaultValue="Doe"
-    //       fullWidth
-    //     />
+            </CardContent>
+          </Card>
+        )}
+      </Formik>
 
-    //     <div >
+    </div>
 
-
-    //     </div>
-    //     <div>
-    //       <TextField
-    //         required
-    //         id="MN"
-    //         label="Middle Name"
-    //         defaultValue="Vahn"
-    //       />
-    //       <TextField
-    //         required
-    //         id="Age"
-    //         type="number"
-    //         label="Age"
-    //         defaultValue="27"
-    //       />
-    //        <FormControl component="fieldset">
-    //       <FormLabel component="legend">Gender</FormLabel>
-    //       <RadioGroup row aria-label="gender" name="row-radio-buttons-group" >
-    //         <FormControlLabel value="female" control={<Radio />} label="Female" />
-    //         <FormControlLabel value="male" control={<Radio />} label="Male" />
-    //         <FormControlLabel value="other" control={<Radio />} label="Other" />
-    //       </RadioGroup>
-    //     </FormControl>
-    //     </div>
-
-       
-
-    //     <TextField
-    //       label="Address"
-    //       id="Add"
-    //       multiline
-    //       fullWidth
-    //       rows={4}
-    //       maxRows={7}
-    //       defaultValue="Burgos St. Pontevedra, Negros Occidental"
-    //     />
-    //   </div>
-    //   {/* <div>
-    //   <TextField
-    //       required
-    //       id="FN"
-    //       label="First Name"
-    //       defaultValue="John"
-    //     />
-    //     <TextField
-    //       required
-    //       id="LN"
-    //       label="Last Name"
-    //       defaultValue="Doe"
-    //     />
-    //       <TextField
-    //       required
-    //       id="MN"
-    //       label="Middle Name"
-    //       defaultValue="Vahn"
-    //     />
-    //      <TextField
-    //       required
-    //       id="Age"
-    //       type="number"
-    //       label="Age"
-    //       defaultValue="27"
-    //     />
-    //   </div> */}
-    // </Box>
   );
 }

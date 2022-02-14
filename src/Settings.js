@@ -20,6 +20,8 @@ import { useHistory } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import { margin } from "@mui/system";
 import clsx from 'clsx';
+import Link from '@material-ui/core/Link';
+import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 // import Banner from 'react-js-banner';
 const useStyles = makeStyles((theme) => ({
   icons: {
@@ -54,17 +56,27 @@ const Settings = () => {
 
   return (
 <div className={spacingClasses.marginTop3} style={{margin:15}}>
-      <Typography variant="h5" >
-        Settings
-      </Typography>
-      
+<Grid container spacing={2} className={spacingClasses.marginBottom5}>
+            <Grid item lg={8} md={7} sm={6} xs={12} className={spacingClasses.marginTop3} style={{ marginLeft: 15 }}>
+            <Breadcrumbs>
+
+         <Link color="inherit" onClick={() => history.push('/dashboard')}>
+         {'Dashboard'}
+       </Link>
+        <Typography variant="h5" className={classes.fontBold}>
+          {'Settings'}
+        </Typography>
+      </Breadcrumbs>
+
+            </Grid>
+          </Grid>
     <div class="row">
-    <div class="column">
+    {/* <div class="column">
         <IconButton className={classes.icons} onClick={() => {Navigate("Home") }}>
           <HomeIcon />
         </IconButton>
         <Typography id="Home" className={classes.text} style={{marginLeft:30}}>Home</Typography>
-      </div>
+      </div> */}
       <div class="column">
         <IconButton className={classes.icons} onClick={() => {Navigate("EmployeeList") }}>
           <AccountBoxIcon />

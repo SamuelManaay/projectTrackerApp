@@ -27,19 +27,15 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import EditIcon from '@material-ui/icons/Edit';
 // import EditIcon from '@material-ui/icons/Settings';
-import IconButton from '@material-ui/core/IconButton';
-import FirstPageIcon from '@material-ui/icons/FirstPage';
-import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
-import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
-import LastPageIcon from '@material-ui/icons/LastPage';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
 // import AddAlarmIcon from '@material-ui/icons/AddAlarm';
 // import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
-
+import axios from "axios";
 import { formatDateYearFirst } from './utils/functions';
-
+import Link from '@material-ui/core/Link';
 //Redux
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -48,20 +44,17 @@ import { ButtonStyles, TypographyStyles, SpacingStyles, TableListStyles, TextFie
 //Formik
 import AssignmentIcon from '@material-ui/icons/Assignment';
 const ButtonComponent = lazy(() => import('./components/ButtonComponent/ButtonComponent'));
+const AddUserLogin = lazy(() => import('./AddUserLogin'));
+
+
+const isLoading = false;
 
 
 const useStyles = makeStyles((theme) => ({
   table: {
     maxHeight: 200,
   },
-  // content: {
-  //   paddingTop: theme.spacing(1),
-  //   textAlign: 'left',
-  //   overflowX: 'auto',
-  //   '& table': {
-  //     marginBottom: 0,
-  //   },
-  // },
+
 }));
 
 const useStyles1 = makeStyles((theme) => ({
@@ -79,140 +72,145 @@ const EmployeeList = () => {
   const classes = useStyles();
   const textFieldClasses = TextFieldStyles();
   const history = useHistory();
+  const [selectedDetails, setSelectedDetails] = React.useState(null);
+  const [openAddUserLogin, setNewAddUserLogin] = React.useState(false);
+  const axios = require('axios');
+
+  const userData1 = [{ Age: 27, BirthDate: "1994/07/23", EmployeeCode: "E-756982", FirstName: "Samuel", LastName: "Mana-ay" }]
+  const [userData, setUserData] = useState({});
+  const [userDataSelect, setUserDataUser] = useState({});
+  useEffect(() => {
+    axios
+      .post('http://127.0.0.1:5000/searchEmp',
+        {
+          database: 'projectTrackerDB', table: 'employee_table1'
+        })
+      .then((response) => {
+        setUserData(response.data);
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+ 
+  const openAddUserLoginMethod = (data) => {
+  
+    setSelectedDetails(data);
+    setNewAddUserLogin(true);
+  };
+
   return (
     <div>
       <Fragment>
         <Suspense fallback={<h3>Loading...</h3>}>
+
           <Grid container spacing={2} className={spacingClasses.marginBottom5}>
-            <Grid item lg={8} md={7} sm={6} xs={12} className={spacingClasses.marginTop3} style={{marginLeft:15}}>
-              <Breadcrumbs aria-label="breadcrumb">
-                <Typography variant="h5" color="textPrimary" className={typographyClasses.fontBold}>
-                  Employee List
+            <Grid item lg={8} md={7} sm={6} xs={12} className={spacingClasses.marginTop3} style={{ marginLeft: 15 }}>
+              <Breadcrumbs>
+
+                <Link color="inherit" onClick={() => history.push('/settings')}>
+                  {'Settings'}
+                </Link>
+                <Typography variant="h5" className={classes.fontBold}>
+                  {'Employee List'}
                 </Typography>
               </Breadcrumbs>
+
             </Grid>
           </Grid>
-
+          <ButtonComponent
+            style={buttonClasses.buttonPrimary}
+            color="primary"
+            text={'Add'}
+            function={(e) =>
+            history.push('addNewEmployee')
+ 
+            }
+          />
           <Fragment>
-            <Hidden mdDown>
-              <TableContainer component={Paper} className={classes.table}>
-                  <Table >
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Employee Code</TableCell>
-                        <TableCell>First Name</TableCell>
-                        <TableCell>last Name</TableCell>
-                        <TableCell>Middle Name</TableCell>
-                        <TableCell>Birthdate</TableCell>
-                        <TableCell>Age</TableCell>
-                        <TableCell>Status</TableCell>
-                        <TableCell align={'center'}>Action</TableCell>
-                      </TableRow>
-                    </TableHead>
-
-                    <TableBody>
-                        <TableRow >
-                          <TableCell>
-                            E-756982
-                          </TableCell>
-                          <TableCell>Samuel</TableCell>
-                          <TableCell>Mana-ay</TableCell>
-                          <TableCell>Abelondon</TableCell>
-                          <TableCell>1994/07/23</TableCell>
-                          <TableCell>27</TableCell>
-                          <TableCell>Single</TableCell>
-
-                            <TableCell align={'center'}>
-                              <div >
-                              <ButtonComponent
-                                  style={buttonClasses.buttonSecondary}
-                                  icon={<EditIcon />}
-                                  text={'Edit'}
-                                  color="primary"
-                                  fullWidth
-                                  function={(e) =>
-                                    history.push('profile-edit')
-                                  }
-                                  />
-                              </div>
-                              <br></br>
-                                <div>
+            {isLoading ? (
+              <LinearProgress />
+            ) : userData && userData.length > 0 ? (
+              <Grid container className={spacingClasses.marginBottom2}>
+               
+                <Grid item lg={12} md={12} xs={12}>
+                  <Fragment>
+                    <TableContainer component={Paper}>
+                      <Table >
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>Employee Code</TableCell>
+                            <TableCell>First Name</TableCell>
+                            <TableCell>last Name</TableCell>
+                            <TableCell>Middle Name</TableCell>
+                            <TableCell align={'center'}>Action</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {userData.map((row) => (
+                            <TableRow >
+                              <TableCell>
+                                {row.EmployeeCode}
+                              </TableCell>
+                              <TableCell>{row.FirstName}</TableCell>
+                              <TableCell>{row.LastName}</TableCell>
+                              <TableCell>{row.MiddleName}</TableCell>
+                              <TableCell align='center'>
                                 <ButtonComponent
                                   style={buttonClasses.buttonPrimary}
+                                  icon={<EditIcon />}
+                                  color="primary"
+                                  text={'Edit'}
+                                  function={(e) =>
+                                    history.push({
+                                      pathname: '/profile-edit',
+                                      state: { id: row._id, location: 'EmployeeList' }
+                                    })
+                                  }
+                                />{' '}
+                                <ButtonComponent
+                                  style={buttonClasses.buttonWarning}
                                   icon={<VisibilityIcon />}
-                                  fullWidth
                                   color="secondary"
                                   text={'View'}
                                   function={(e) =>
-                                    history.push('profile')
+                                    // history.push('profile')
+                                    history.push({
+                                      pathname: '/profile',
+                                      state: { id: row._id, location: 'EmployeeList' }
+                                    })
                                   }
                                 />
-                                </div>
+                                {' '}
+                                <ButtonComponent
+                                  style={buttonClasses.buttonWarning}
+                                  icon={<GroupAddIcon />}
 
-                            </TableCell>
-                        </TableRow>
-                    </TableBody>
-                  </Table>
-              </TableContainer>
-            </Hidden>
-
-            <Hidden lgUp>
-                <Grid container spacing={2}>
-                    <Grid item md={4} sm={6} xs={12} >
-                      <Card className={classes.card}>
-                        <CardContent className={classes.content}>
-                          <Table className={classes.table} aria-label="simple table">
-                            <TableBody>
-                              <TableRow>
-                                <TableCell variant="head">Employee Code</TableCell>
-                                <TableCell variant="body">E-756982</TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell variant="head">First Name</TableCell>
-                                <TableCell variant="body">Samuel</TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell variant="head">Last Name</TableCell>
-                                <TableCell variant="body">Mana-ay</TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell variant="head">Middle Name</TableCell>
-                                <TableCell variant="body">Abelondon</TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell variant="head">Birthdate</TableCell>
-                                <TableCell variant="body">1994/07/23</TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell variant="head">Age</TableCell>
-                                <TableCell variant="body">27</TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell variant="head">Status</TableCell>
-                                <TableCell variant="body">Single</TableCell>
-                              </TableRow>
-                            </TableBody>
-                          </Table>
-                            <ButtonComponent
-                              fullWidth={true}
-                              style={clsx(buttonClasses.buttonSecondary, spacingClasses.marginTop3)}
-                              icon={<EditIcon />}
-                              text={'Edit'}
-                            />
-                            <ButtonComponent
-                              fullWidth={true}
-                              style={clsx(buttonClasses.buttonPrimary, spacingClasses.marginTop1)}
-                              function={(e) =>
-                                history.push(`profile`)
-                              }
-                              icon={<VisibilityIcon />}
-                              text={'View'}
-                            />
-                        </CardContent>
-                      </Card>
-                    </Grid>
+                                  text={'User Login'}
+                                  style={clsx(buttonClasses.buttonPrimary)}
+                                  function={() => openAddUserLoginMethod(row)}
+                                />
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </Fragment>
+                  
                 </Grid>
-            </Hidden>
+                <AddUserLogin
+                  open={openAddUserLogin}
+                  onAgree={() => setNewAddUserLogin(false)}
+                  onDisagree={() => setNewAddUserLogin(false)}
+                  details={selectedDetails}
+                  returnval = {() => setNewAddUserLogin(false)}
+                />
+              </Grid>
+            ) : (
+              <Typography variant="h6">{'No Employees Available...'}</Typography>
+            )}
           </Fragment>
         </Suspense>
       </Fragment>

@@ -39,8 +39,8 @@ const SuccessDialog = lazy(() => import('./components/Dialogs/SuccessDialog'));
 
 export default function Profile() {
   const location = useLocation();
-  const EMPID = location.state.id;
-  const Loc = location.state.location;
+//   const EMPID = location.state.id;
+//   const Loc = location.state.location;
   const classes = useStyles();
   const [selectedDetails, setSelectedDetails] = React.useState(null);
   const [openConfDialog, setConfirmDialogOpen] = React.useState(false);
@@ -91,32 +91,16 @@ export default function Profile() {
   ];
   const bloodTypes = ['UNKNOWN', 'A', 'A+', 'A-', 'B', 'B+', 'B-', 'O', 'O+', 'O-', 'AB', 'AB+', 'AB-'];
 
-  useEffect(() => {
-    setIsLoading(true)
-    axios
-      .post('http://127.0.0.1:5000/searchEmpID',
-        {
-          database: db, table: tbl, empID: EMPID
-        })
-      .then((response) => {
-        setUserData(response.data);
-        console.log(response);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
 
-  }, []);
 
   const openConfirmDialog = (values) => {
     const details = {
       form: values,
       dialog: {
-        title: 'Update',
-        content: `Are you sure you want to update employee details?`,
+        title: 'Save',
+        content: `Are you sure you want to add this new employee?`,
         buttonDisagree: 'Cancel',
-        buttonAgree: 'Update',
+        buttonAgree: 'Save',
         type: 'primary',
       },
     };
@@ -129,7 +113,7 @@ export default function Profile() {
     const arr = {
       dialog: {
         title: 'Success',
-        content: `Employee details has been updated.`,
+        content: `New Employee has been inserted.`,
         buttonAgree: 'View details',
         type: 'primary',
       },
@@ -138,14 +122,14 @@ export default function Profile() {
     setSuccessDialogOpen(true);
   };
 
-  const onUpdateEmployee = () => {
+  const onAddEmployee = () => {
     let { form } = selectedDetails;
     setConfirmDialogOpen(false);
     console.log(form, "form here")
     axios
       .post('http://127.0.0.1:5000/operate_req',
         {
-          database: db, table: tbl, operationTarget: [form], operation: 31
+          database: db, table: tbl, operationTarget: [form], operation: 20
         })
       .then((response) => {
         openSuccessDialog();
@@ -159,17 +143,11 @@ export default function Profile() {
   return (
     <div>
       <Breadcrumbs style={{ marginLeft: 15 }}>
-        {Loc === 'EmployeeList' ? (
           <Link color="inherit" onClick={() => history.push('/employees')}>
             {'Employee List'}
           </Link>
-        ) : (
-          <Link color="inherit" onClick={() => history.push('/dashboard')}>
-            {'Dashboard'}
-          </Link>
-        )}
         <Typography variant="h5" className={classes.fontBold}>
-          {'Profile'}
+          {'Add New Employee'}
         </Typography>
       </Breadcrumbs>
 
@@ -177,34 +155,6 @@ export default function Profile() {
         enableReinitialize
 
         initialValues={{
-          // Basic Information
-          _id: userData[0]?._id ? userData[0]?._id : '',
-          EmployeeCode: userData[0]?.EmployeeCode ? userData[0]?.EmployeeCode : '',
-          LastName: userData[0]?.LastName ? userData[0]?.LastName : '',
-          FirstName: userData[0]?.FirstName ? userData[0]?.FirstName : '',
-          MiddleName: userData[0]?.MiddleName ? userData[0]?.MiddleName : '',
-          Suffix: userData[0]?.Suffix ? userData[0]?.Suffix : '',
-          Gender: userData[0]?.Gender ? userData[0]?.Gender : '',
-          CivilStatus: userData[0]?.CivilStatus ? userData[0]?.CivilStatus : '',
-          Birthdate: userData[0]?.Birthdate ? userData[0]?.Birthdate : '',
-          Birthplace: userData[0]?.Birthplace ? userData[0]?.Birthplace : '',
-          ExtensionName: userData[0]?.ExtensionName ? userData[0]?.ExtensionName : '',
-          Religion: userData[0]?.Religion ? userData[0]?.Religion : '',
-          BloodType: userData[0]?.BloodType ? userData[0]?.BloodType : '',
-          // Contact Information
-          MobileNo: userData[0]?.MobileNo ? userData[0]?.MobileNo : '',
-          TelephoneNo: userData[0]?.TelephoneNo ? userData[0]?.TelephoneNo : '',
-          EmailAddress1: userData[0]?.PersonalEmail ? userData[0]?.PersonalEmail : '',
-          EmailAddress2: userData[0]?.CompanyEmail ? userData[0]?.CompanyEmail : '',
-          EmergencyName: userData[0]?.EmergencyName ? userData[0]?.EmergencyName : '',
-          EmergencyRelationship: userData[0]?.EmergencyRelationship ? userData[0]?.EmergencyRelationship: '',
-          EmergencyMobileNo: userData[0]?.EmergencyMobileNo ? userData[0]?.EmergencyMobileNo : '',
-          Address: userData[0]?.Address ? userData[0]?.Address : '',
-          EmergencyAddress: userData[0]?.EmergencyAddress ? userData[0]?.EmergencyAddress : '',
-          SSSNo: userData[0]?.SSSNo ? userData[0]?.SSSNo  : '',
-          TINNo: userData[0]?.TINNo ? userData[0]?.TINNo : '',
-          PagibigNo: userData[0]?.PagibigNo ? userData[0]?.PagibigNo : '',
-          NoOfDependent: userData[0]?.NoOfDependent ? userData[0]?.NoOfDependent : '',
         }}
         onSubmit={(values) => {
 
@@ -224,7 +174,7 @@ export default function Profile() {
                   disableEscapeKeyDown
                   details={selectedDetails?.dialog}
                   open={openConfDialog}
-                  onAgree={onUpdateEmployee}
+                  onAgree={onAddEmployee}
                   onDisagree={() => setConfirmDialogOpen(false)}
                   isLoading={false}
                 />
@@ -267,7 +217,7 @@ export default function Profile() {
                     <TextFieldComponent
                       type={'text'}
                       placeholder={'Employee Code'}
-                      name={'DatacenterCode'}
+                      name={'EmployeeCode'}
                       value={values.EmployeeCode}
                       variant="outlined"
                       size="small"
@@ -286,7 +236,7 @@ export default function Profile() {
                     <TextFieldComponent
                       type={'text'}
                       placeholder={'Last Name'}
-                      name={'Lastname'}
+                      name={'LastName'}
                       value={values.LastName}
                       variant="outlined"
                       size="small"
@@ -305,7 +255,7 @@ export default function Profile() {
                     <TextFieldComponent
                       type={'text'}
                       placeholder={'First Name'}
-                      name={'Firstname'}
+                      name={'FirstName'}
                       variant="outlined"
                       size="small"
                       value={values.FirstName}
@@ -324,7 +274,7 @@ export default function Profile() {
                     <TextFieldComponent
                       type={'text'}
                       placeholder={'Middle Name'}
-                      name={'Middlename'}
+                      name={'MiddleName'}
                       variant="outlined"
                       size="small"
                       value={values.MiddleName}
@@ -781,339 +731,13 @@ export default function Profile() {
                         size={'medium'}
                         color={'primary'}
                       >
-                        {'Update'}
+                        {'Save'}
                       </Button>
                     </Grid>
                   </Grid>
                 </Grid>
               </CardContent>
             </Card>
-            {/* <Card>
-              <Suspense fallback={<h3>Loading...</h3>}>
-                <ReusableDialog
-                  disableBackdropClick
-                  disableEscapeKeyDown
-                  details={selectedDetails?.dialog}
-                  open={openConfDialog}
-                  onAgree={onUpdateEmployee}
-                  onDisagree={() => setConfirmDialogOpen(false)}
-                  isLoading={false}
-                />
-
-                <SuccessDialog
-                  disableBackdropClick
-                  disableEscapeKeyDown
-                  details={selectedDetails?.dialog}
-                  open={openSucDialog}
-                  onAgree={() => {
-                    history.push(`/employees`);
-                  }}
-                  onDisagree={() => setSuccessDialogOpen(false)}
-                  isLoading={false}
-                />
-              </Suspense>
-              {isLoading ? (
-                <LinearProgress />
-              ) : userData.length > 0 ? (
-                <CardContent className={textFieldClasses.textFieldSection}>
-                  <Divider classes={{ root: classes.divider }} />
-
-                  <Typography
-                    variant="h5"
-                    className={clsx(
-                      typographyClasses.fontBold,
-                      spacingClasses.marginBottom2,
-                      spacingClasses.marginTop1
-                    )}
-                  >
-                    Basic Information
-                  </Typography>
-
-                  <Grid container className={spacingClasses.marginBottom2}>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <Typography
-                        variant="body1"
-                        className={clsx(typographyClasses.fontBold, spacingClasses.marginBottom1)}
-                      >
-                        Employee Code
-                      </Typography>
-                      <TextFieldComponent
-                        type={'text'}
-                        placeholder={'Employee Code'}
-                        name={'EmployeeCode'}
-                        value={values.EmployeeCode}
-                        variant="outlined"
-                        size="small"
-
-                        handleChange={handleChange}
-                        handleBlur={handleBlur}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                    <Typography
-                            variant="body1"
-                            className={clsx(typographyClasses.fontBold, spacingClasses.marginBottom1)}
-                          >
-                            Last Name
-                          </Typography>
-                          <TextFieldComponent
-                            type={'text'}
-                            placeholder={'Last Name'}
-                            name={'Lastname'}
-                            value={values.LastName}
-                            variant="outlined"
-                            size="small"
-
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                          />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                    <Typography
-                            variant="body1"
-                            className={clsx(typographyClasses.fontBold, spacingClasses.marginBottom1)}
-                          >
-                            First Name
-                          </Typography>
-                          <TextFieldComponent
-                            type={'text'}
-                            placeholder={'First Name'}
-                            name={'Firstname'}
-                            variant="outlined"
-                            size="small"
-                            value={values.FirstName}
-
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                          />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                    <Typography
-                            variant="body1"
-                            className={clsx(typographyClasses.fontBold, spacingClasses.marginBottom1)}
-                          >
-                            Middle Name
-                          </Typography>
-                          <TextFieldComponent
-                            type={'text'}
-                            placeholder={'Middle Name'}
-                            name={'Middlename'}
-                            variant="outlined"
-                            size="small"
-                            value={values.MiddleName}
-
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                          />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                    <Typography
-                            variant="body1"
-                            className={clsx(typographyClasses.fontBold, spacingClasses.marginBottom1)}
-                          >
-                            Suffix
-                          </Typography>
-                          <TextFieldComponent
-                            type={'text'}
-                            placeholder={'Suffix'}
-                            variant="outlined"
-                            name={'Suffix'}
-                            size="small"
-                            value={values.Suffix}
-
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                          />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                    <Typography
-                            variant="body1"
-                            className={clsx(typographyClasses.fontBold, spacingClasses.marginBottom1)}
-                          >
-                            Extension Name
-                          </Typography>
-                          <TextFieldComponent
-                            type={'text'}
-                            placeholder={'Extension Name'}
-                            variant="outlined"
-                            name={'ExtensionName'}
-                            size="small"
-                            value={values.ExtensionName}
-
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                          />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                    <Typography
-                            variant="body1"
-                            className={clsx(typographyClasses.fontBold, spacingClasses.marginBottom1)}
-                          >
-                            Birthdate
-                          </Typography>
-                          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                            <KeyboardDatePicker
-                              placeholder={'Birthdate'}
-                              size="small"
-
-                              autoOk
-                              fullWidth
-                              format="MM/dd/yyyy"
-                              inputVariant="outlined"
-                              value={values.Birthdate}
-                              onChange={(val) => {
-                                setFieldValue('Birthdate', val);
-                              }}
-                              variant="outlined"
-                              maxDate={new Date()}
-                            />
-                          </MuiPickersUtilsProvider>
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                    <Typography
-                            variant="body1"
-                            className={clsx(typographyClasses.fontBold, spacingClasses.marginBottom1)}
-                          >
-                            Gender
-                          </Typography>
-                          <TextField
-                            placeholder={'Gender'}
-                            variant="outlined"
-                            select
-                            size="small"
-                            value={values.Gender}
-
-                            onChange={handleChange('Gender')}
-                            fullWidth
-                            style={{marginBottom:100}}
-                          >
-                            {genders.map((gender, index) => (
-                              <MenuItem key={index} value={gender}>
-                                {gender}
-                              </MenuItem>
-                            ))}
-                          </TextField>
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                    <Typography
-                            variant="body1"
-                            className={clsx(typographyClasses.fontBold, spacingClasses.marginBottom1)}
-                          >
-                            Civil Status
-                          </Typography>
-                          <TextField
-                            placeholder={'Civil Status'}
-                            variant="outlined"
-                            select
-                            size="small"
-                            value={values.CivilStatus}
-
-                            onChange={handleChange('CivilStatus')}
-                            fullWidth
-                          >
-                            {civilStatuses.map((status, index) => (
-                              <MenuItem key={index} value={status}>
-                                {status}
-                              </MenuItem>
-                            ))}
-                          </TextField>
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <List>
-                        <ListItem>
-                          <ListItemText primary="Religion" secondary={values.Religion} />
-                        </ListItem>
-                      </List>
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <List>
-                        <ListItem>
-                          <ListItemText primary="Nationality" secondary={values.Nationality} />
-                        </ListItem>
-                      </List>
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <List>
-                        <ListItem>
-                          <ListItemText primary="Blood Type" secondary={values.BloodType} />
-                        </ListItem>
-                      </List>
-                    </Grid>
-                  </Grid>
-
-
-
-
-                  <Divider classes={{ root: classes.divider }} />
-
-                  <Typography
-                    variant="h5"
-                    className={clsx(
-                      typographyClasses.fontBold,
-                      spacingClasses.marginBottom2,
-                    )}
-                  >
-                    Contact Information
-                  </Typography>
-                  <Grid container className={spacingClasses.marginBottom2}>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <List>
-                        <ListItem>
-                          <ListItemText primary="Telephone No." secondary={values.TelephoneNo} />
-                        </ListItem>
-                      </List>
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <List>
-                        <ListItem>
-                          <ListItemText primary="Mobile No." secondary={values.MobileNo} />
-                        </ListItem>
-                      </List>
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <List>
-                        <ListItem>
-                          <ListItemText primary="Personal Email" secondary={values.EmailAddress1} />
-                        </ListItem>
-                      </List>
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <List>
-                        <ListItem>
-                          <ListItemText primary="Company Email" secondary={values.EmailAddress2} />
-                        </ListItem>
-                      </List>
-                    </Grid>
-                  </Grid>
-
-                </CardContent>
-
-              ) : (
-                <Typography variant="h6">No Employee</Typography>
-              )}
-              <Grid>
-                <Grid
-                  item
-                  lg={12}
-                  md={12}
-                  sm={12}
-                  xs={12}
-                  style={{ marginTop: '2%', marginLeft: 15, marginRight: 10 }}
-                >
-                  <Button
-                    style={{ marginBottom: 150 }}
-                    variant={'contained'}
-                    type="submit"
-                    size={'medium'}
-                    color={'primary'}
-                  >
-                    {'Update'}
-                  </Button>
-
-                </Grid>
-              </Grid>
-
-            </Card> */}
 
           </form>
         )}
