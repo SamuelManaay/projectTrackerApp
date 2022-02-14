@@ -1,0 +1,30 @@
+
+
+CREATE FUNCTION public.lastmodified()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+BEGIN
+        NEW._lastmodified := current_timestamp;
+        RETURN NEW;
+    END;
+$BODY$;
+
+
+
+CREATE TABLE public.sample_coll1
+(
+    _id uuid NOT NULL DEFAULT gen_random_uuid(),
+    document jsonb,
+    _lastmodified timestamp with time zone,
+    _created timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT sample_01_pkey PRIMARY KEY (_id)
+)
+
+CREATE TRIGGER sample_coll1_lastmodified
+    BEFORE INSERT OR UPDATE 
+    ON public.sample_coll1
+    FOR EACH ROW
+    EXECUTE PROCEDURE public.lastmodified();
+

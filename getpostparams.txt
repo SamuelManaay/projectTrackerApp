@@ -1,0 +1,27 @@
+post
+http://127.0.0.1:5000/searchEmp
+{
+     "database": "projectTrackerDB",
+    "table": "employee_table1",
+    "operation": 20,
+    "operationTarget": [
+    {
+       "name": "foo1"
+    },
+    {
+       "name": "foo2"
+    }
+  ]
+}
+
+get
+http://127.0.0.1:5000/search
+{
+    "database": "projectTrackerDB",
+    "table": "employee_table1",
+    "condition" : {},
+    "limit" : 1000000 , 
+    "offset" : 0,
+    "auth_info" : "test" ,
+    "headers" : "test"
+}
